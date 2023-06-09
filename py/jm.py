@@ -24,8 +24,10 @@ def main():
 
 def get_option():
     from jmcomic import create_option, print_eye_catching
+
     # 读取 option 配置文件
     option = create_option('../assets/config/workflow_option.yml')
+    hook_debug(option)
 
     # 启用 client 的缓存
     client = option.build_jm_client()
@@ -46,7 +48,6 @@ def get_option():
         client.login(username, password, True)
         print_eye_catching(f'登录禁漫成功')
 
-    hook_debug(option)
     return option
 
 
@@ -62,7 +63,7 @@ def hook_debug(option):
         def raise_request_error(cls, resp, msg):
             from common import write_text, fix_windir_name, format_ts
             write_text(
-                f'{jm_download_dir}/[请求禁漫失败时的网页内容]_[{format_ts}]_[{fix_windir_name(resp.url)}].html',
+                f'{jm_download_dir}/[请求失败的响应内容]_[{format_ts()}]_[{fix_windir_name(resp.url)}].html',
                 resp.text
             )
 
