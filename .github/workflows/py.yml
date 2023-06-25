@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'py/jm.py'
+      - 'py/workflow_download.py'
       - '.github/workflows/py.yml'
       - 'assets/config/*.yml'
   workflow_dispatch:
@@ -33,7 +33,7 @@ jobs:
           JM_PASSWORD: ${{ secrets.JM_PASSWORD }}
         run: |
           cd py/
-          python3 jm.py
+          python3 workflow_download.py
 
       - name: 压缩下载的漫画
         run: |
