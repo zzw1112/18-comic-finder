@@ -35,7 +35,7 @@ jobs:
       - name: 运行下载脚本
         continue-on-error: true
         run: |
-          cd ./usage/
+          cd ./py/
           python workflow_download.py
 
       - name: 压缩文件
