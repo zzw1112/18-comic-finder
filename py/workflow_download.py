@@ -18,10 +18,23 @@ jm_albums = '''
 '''
 
 
+def get_jm_album_ids():
+    from common import str_to_set
+
+    aid_set = set()
+    for text in [
+        jm_albums,
+        (get_env('JM_ALBUM_IDS') or '').replace('-', '\n'),
+    ]:
+        aid_set.update(str_to_set(text))
+
+    return aid_set
+
+
 def main():
-    from jmcomic import str_to_list, download_album
+    from jmcomic import download_album
     # 下载漫画
-    download_album(str_to_list(jm_albums), option=get_option())
+    download_album(get_jm_album_ids(), option=get_option())
 
 
 def get_option():
@@ -59,19 +72,19 @@ def hook_debug(option):
     jm_download_dir = get_env('JM_DOWNLOAD_DIR') or workspace()
     mkdir_if_not_exists(jm_download_dir)
 
-    class HookDebugClient(JmHtmlClient):
+    class RaiseErrorAwareClient(JmHtmlClient):
 
         @classmethod
-        def raise_request_error(cls, resp, msg):
+        def raise_request_error(cls, resp, msg=None):
             from common import write_text, fix_windir_name, format_ts
             write_text(
-                f'{jm_download_dir}/[请求失败的响应内容]_[{format_ts()}]_[{fix_windir_name(resp.url)}].html',
+                f'{jm_download_dir}/{fix_windir_name(resp.url)}',
                 resp.text
             )
 
             return super().raise_request_error(resp, msg)
 
-    option.jm_client_impl_mapping['html'] = HookDebugClient
+    option.jm_client_impl_mapping['html'] = RaiseErrorAwareClient
 
 
 def get_env(name):
