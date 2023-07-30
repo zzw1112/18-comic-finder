@@ -7,7 +7,6 @@ on:
       - 'master' # master专门用于发布pip和repo介绍
     paths:
       - '.github/workflows/py.yml' # 工作流定义
-      - 'py/py.py' # 下载脚本
       - 'assets/config/option_workflow_download.yml' # 配置文件
 
 jobs:
