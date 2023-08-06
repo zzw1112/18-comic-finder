@@ -1,4 +1,4 @@
-name: py
+name: 下载JM本子
 
 on:
   workflow_dispatch:
@@ -6,8 +6,8 @@ on:
     branches-ignore:
       - 'master' # master专门用于发布pip和repo介绍
     paths:
-      - '.github/workflows/py.yml' # 工作流定义
-      - 'py/workflow_download.py' # 下载脚本
+      - '.github/workflows/download.yml' # 工作流定义
+      - 'usage/workflow_download.py' # 下载脚本
       - 'assets/config/option_workflow_download.yml' # 配置文件
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
     env:
       JM_USERNAME: ${{ secrets.JM_USERNAME }}
       JM_PASSWORD: ${{ secrets.JM_PASSWORD }}
-      JM_DOWNLOAD_DIR: /home/runner/work/18-comic-finder/download/
+      JM_DOWNLOAD_DIR: /home/runner/work/jmcomic/download/
       ZIP_NAME: '本子.tar.gz'
       UPLOAD_NAME: '下载完成的本子'
 
@@ -28,11 +28,13 @@ jobs:
           python-version: "3.11"
 
       - name: 安装依赖项（pip）
+        if: ${{ github.ref == 'refs/heads/workflow' }}
         run: |
           python -m pip install --upgrade pip
           pip install jmcomic -i https://pypi.org/project --upgrade
 
       - name: 安装依赖项（local）
+        if: ${{ github.ref != 'refs/heads/workflow' }}
         run: |
           python -m pip install --upgrade pip
           pip install commonX -i https://pypi.org/project --upgrade
@@ -41,7 +43,7 @@ jobs:
       - name: 运行下载脚本
         continue-on-error: true
         run: |
-          cd ./py/
+          cd ./usage/
           python workflow_download.py
 
       - name: 压缩文件
@@ -57,4 +59,4 @@ jobs:
           path: ${{ env.JM_DOWNLOAD_DIR }}/${{ env.ZIP_NAME }}
           if-no-files-found: warn
           # Duration after which artifact will expire in days. 0 means using default retention.Minimum 1 day. Maximum 90 days unless changed from the repository settings page.
-          retention-days: 10
+          retention-days: 90
